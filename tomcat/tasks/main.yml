@@ -1,0 +1,23 @@
+- name: add group
+  group: name=tomcat
+
+- name: add user
+  user: name=tomcat comment="TomcatUser"
+
+- name: Download Tomcat
+  get_url: url=http://archive.apache.org/dist/tomcat/tomcat-7/v7.0.61/bin/apache-tomcat-7.0.61.tar.gz dest=/opt/apache-tomcat-7.0.61.tar.gz
+ 
+- name: Extract archive
+  command: /bin/tar xvf /opt/apache-tomcat-7.0.61.tar.gz -C /opt/
+
+- name: Change ownership of Tomcat installation
+  file: path=/opt/apache-tomcat-7.0.61 owner=tomcat group=tomcat state=directory recurse=yes
+
+- name: Symlink install directory
+  file: src=/opt/apache-tomcat-7.0.61 path=/opt/tomcat state=link
+
+- name: Configure Tomcat users
+  template: src=tomcat-users.xml dest=/opt/tomcat/conf/
+
+- name: Configure catalina.sh
+  template: src=catalina.sh dest=/opt/tomcat/bin/
